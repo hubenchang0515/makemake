@@ -16,7 +16,11 @@ int main(int argc, char* argv[])
 
     if (argc == 2 && std::string{argv[1]} == std::string{"init"})
     {
-        // TODO: 生成默认的 makemake.json
+        MakeMake::Config config;
+        auto name = std::filesystem::current_path().filename();
+        auto sources = MakeMake::scan(std::filesystem::current_path(), {".c", ".cpp"});
+        auto data = config.init(name, sources);
+        MakeMake::writeFile("makemake.json", data);
         return EXIT_SUCCESS;
     }
 

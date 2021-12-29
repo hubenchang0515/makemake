@@ -2,6 +2,8 @@
 #include "utils.h"
 
 #include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 namespace MakeMake
 {
@@ -26,9 +28,78 @@ std::vector<Target> Config::load(const std::string& file) const noexcept
         loadTarget(target, targetDoc);
     }
 
-    
-    
     return targets;
+}
+
+/**************************************
+     * @brief 生成默认的配置文件
+     * @param[in] name 目标名称
+     * @param[in] sources 源文件
+     * @return 生成的配置数据
+     * ************************************/
+    std::string Config::init(const std::string& name, const std::vector<std::string>& sources) const noexcept
+{
+    rapidjson::StringBuffer strBuf;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(strBuf);
+
+    writer.StartObject(); // root
+    writer.Key("targets");
+    writer.StartArray(); // targets
+
+    writer.StartObject(); // target
+
+    writer.Key("name");
+    writer.String(name.c_str());
+
+    writer.Key("type");
+    writer.String("executable");
+
+    writer.Key("cc");
+    writer.String("gcc");
+
+    writer.Key("cxx");
+    writer.String("g++");
+
+    writer.Key("cflags");
+    writer.String("-O2 -W -Wall");
+
+    writer.Key("cxxflags");
+    writer.String("-O2 -W -Wall");
+
+    writer.Key("ar");
+    writer.String("ar");
+
+    writer.Key("arflags");
+    writer.String("rcs");
+
+    writer.Key("libs");
+    writer.String("");
+
+    writer.Key("install");
+    writer.String("");
+
+    writer.Key("cmd");
+    writer.String("");
+
+    writer.Key("sources");
+    writer.StartArray(); // sources
+
+    for (auto& src : sources)
+    {
+        writer.String(src.c_str());
+    }
+
+    writer.EndArray(); // sources
+
+    writer.Key("depends");
+    writer.StartArray(); // depends
+    writer.EndArray(); // depends
+
+    writer.EndObject(); // target
+    writer.EndArray(); // targets
+    writer.EndObject(); // root
+
+    return strBuf.GetString();
 }
 
 /**************************************

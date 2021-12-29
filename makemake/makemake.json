@@ -1,27 +1,24 @@
 {
-    "targets" : [
+    "targets": [
         {
-            "name" : "makemake",
-            "type" : "executable",
-            "cc" : "gcc",
-            "cxx" : "g++",
-            "cflags" : "-O3 -W -Wall -Wextra -std=c99 -Iinclude",
-            "cxxflags" : "-O3 -W -Wall -Wextra -std=c++17 -Iinclude",
-            "ar" : "ar",
-            "arflags" : "rcs",
-            "libs" : "-lstdc++fs",
-            "install" : "/usr/bin",
-            "cmd" : "",
-            "sources" : [
-                "config.cpp",  
-                "generator.cpp",  
-                "main.cpp",  
-                "target.cpp",  
+            "name": "makemake",
+            "type": "executable",
+            "cc": "gcc",
+            "cxx": "g++",
+            "cflags": "-O2 -W -Wall",
+            "cxxflags": "-O2 -W -Wall -Wextra -Iinclude -std=c++17",
+            "ar": "ar",
+            "arflags": "rcs",
+            "libs": "-lstdc++fs",
+            "install": "/usr/bin",
+            "cmd": "",
+            "sources": [
+                "config.cpp",
+                "main.cpp",
+                "target.cpp",
                 "utils.cpp"
             ],
-            "depends" : [
-
-            ]
+            "depends": []
         }
     ]
 }
