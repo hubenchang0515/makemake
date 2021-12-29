@@ -31,9 +31,7 @@ std::string execute(const std::string& cmd) noexcept
     }
 
     std::string ret;
-
     char buff[MAKEMAKE_IOBUFF_SIZE];
-
     do
     {
         size_t len = fread(buff, 1, MAKEMAKE_IOBUFF_SIZE, fp);
@@ -101,6 +99,54 @@ bool exist(const std::string& path) noexcept
 {
     std::filesystem::path fspath{path};
     return std::filesystem::exists(fspath);
+}
+
+/**************************************
+ * @brief 将一组字符串展开成一个字符串
+ * @param[in] strs 要展开的字符串vector
+ * @param[in] sp 插入的分割字符串
+ * @return 展开的字符串
+ * ************************************/
+std::string strJoin(const std::vector<std::string>& strs, const std::string& sp) noexcept
+{
+    if (strs.size() == 0)
+        return "";
+
+    std::string ret;
+    size_t i = 0;
+    for (; i + 1 < strs.size(); i++)
+    {
+        ret += strs[i] + sp;
+    }
+
+    ret += strs[i];
+
+    return ret;
+}
+
+/**************************************
+ * @brief 读取整个文件
+ * @param[in] file 要读取的文件
+ * @return 读取到的内容
+ * ************************************/
+std::string readFile(const std::string& file) noexcept
+{
+    FILE* fp = fopen(file.c_str(), "rb");
+    if (fp == nullptr)
+    {
+        return "";
+    }
+
+    std::string ret;
+    char buff[MAKEMAKE_IOBUFF_SIZE];
+    do
+    {
+        size_t len = fread(buff, 1, MAKEMAKE_IOBUFF_SIZE, fp);
+        ret.append(buff, len);
+    }while(!feof(fp));
+
+    fclose(fp);
+    return ret;
 }
 
 }; // namespace MakeMake

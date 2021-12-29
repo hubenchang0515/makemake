@@ -30,12 +30,12 @@ void Target::setSources(const std::vector<std::string>& sources) noexcept
         std::filesystem::path path{s};
         if (cppExts.find(path.extension()) != cppExts.end())
         {
-            m_link = m_cxx;
+            m_linker = m_cxx;
             return;
         }
     }
 
-    m_link = m_cc;
+    m_linker = m_cc;
 }
 
 std::vector<const Target*> Target::depends() const noexcept
@@ -98,16 +98,6 @@ void Target::setCxxflags(const std::string& cxxflags) noexcept
     m_cxxflags = cxxflags;
 }
 
-std::string Target::libs() const noexcept
-{
-    return m_libs;
-}
-
-void Target::setLibs(const std::string& libs) noexcept
-{
-    m_libs = libs;
-}
-
 std::string Target::ar() const noexcept
 {
     return m_ar;
@@ -126,6 +116,26 @@ std::string Target::arflags() const noexcept
 void Target::setArflags(const std::string& arflags) noexcept
 {
     m_arflags = arflags;
+}
+
+std::string Target::libs() const noexcept
+{
+    return m_libs;
+}
+
+void Target::setLibs(const std::string& libs) noexcept
+{
+    m_libs = libs;
+}
+
+std::string Target::install() const noexcept
+{
+    return m_install;
+}
+
+void Target::setInstall(const std::string& install) noexcept
+{
+    m_install = install;
 }
 
 /**********************************************
@@ -156,29 +166,24 @@ std::vector<std::string> Target::objects() const noexcept
 std::string Target::makefile() const noexcept
 {
     std::string str;
-    str += m_name + ": ";
     
-    auto objs = objects();
-    for (const auto& obj : objs)
-    {
-        str += obj + " ";
-    }
-
+    auto objs = strJoin(objects(), " ");
+    str += m_name + ": " + objs;
     str += "\n\t";
-    str += m_link + " -o $@ $^ " + m_libs + "\n";
+    str += m_linker + " -o $@ $^ " + m_libs + "\n";
 
     for (const auto& src : m_sources)
     {
         std::filesystem::path path{src};
         if (path.extension() == ".c")
         {
-            str += rule(m_cc, src);
+            str += rule(m_cc + " " + m_cflags, src);
             str += "\n\t";
             str += m_cc + " -c " + src + " " + m_cflags +"\n";
         }
         else if(cppExts.find(path.extension()) != cppExts.end())
         {
-            str += rule(m_cxx, src);
+            str += rule(m_cxx + " " + m_cxxflags, src);
             str += "\n\t";
             str += m_cxx + " -c " + src + " " + m_cxxflags +"\n";
         }

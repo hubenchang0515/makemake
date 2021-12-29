@@ -33,17 +33,17 @@ If there is a `makemake.json` in the working directory, it will generate a `Make
             "cxx" : "<C++ compiler>",
             "cflags" : "<C compiling flags>",
             "cxxflags" : "<C++ compiling flags>",
-            "libs" : "<link libs>",
             "ar" : "<archive tool>",
             "arflags" : "<archive flags>",
+            "libs" : "<link libs>",
             "install" : "<install path>",
             "cmd" : "<command, only for type other>",
-            "sources" : {
+            "sources" : [
                 // source files
-            },
-            "depends" : {
+            ],
+            "depends" : [
                 // other targets
-            }
+            ]
         }
     ]
 }

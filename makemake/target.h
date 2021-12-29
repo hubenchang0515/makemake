@@ -42,14 +42,17 @@ public:
     std::string cxxflags() const noexcept;
     void setCxxflags(const std::string& libs) noexcept;
 
-    std::string libs() const noexcept;
-    void setLibs(const std::string& cxxflags) noexcept;
-
     std::string ar() const noexcept;
     void setAr(const std::string& ar) noexcept;
 
     std::string arflags() const noexcept;
     void setArflags(const std::string& arflags) noexcept;
+
+    std::string libs() const noexcept;
+    void setLibs(const std::string& cxxflags) noexcept;
+
+    std::string install() const noexcept;
+    void setInstall(const std::string& install) noexcept;
 
     /***********************************
      * @brief 根据 sources 生成 objects 列表
@@ -69,17 +72,18 @@ private:
     std::vector<const Target*> m_depends;
     std::string m_cmd;
 
-    Type        m_type = Type::executable;
     std::string m_cc = "gcc";
     std::string m_cxx = "g++";
     std::string m_cflags = "";
     std::string m_cxxflags = "";
-    std::string m_libs = "";
     std::string m_ar = "ar";
     std::string m_arflags = "rcs";
+
+    Type        m_type = Type::executable;
+    std::string m_libs = "";
     std::string m_install = "";
 
-    std::string m_link;
+    std::string m_linker;
 
 }; // class Target
 

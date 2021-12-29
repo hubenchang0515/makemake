@@ -1,0 +1,27 @@
+{
+    "targets" : [
+        {
+            "name" : "makemake",
+            "type" : "executable",
+            "cc" : "gcc",
+            "cxx" : "g++",
+            "cflags" : "-O3 -W -Wall -Wextra -std=c99 -Iinclude",
+            "cxxflags" : "-O3 -W -Wall -Wextra -std=c++17 -Iinclude",
+            "ar" : "ar",
+            "arflags" : "rcs",
+            "libs" : "-lstdc++fs",
+            "install" : "<install path>",
+            "cmd" : "",
+            "sources" : [
+                "config.cpp",  
+                "generator.cpp",  
+                "main.cpp",  
+                "target.cpp",  
+                "utils.cpp"
+            ],
+            "depends" : [
+
+            ]
+        }
+    ]
+}

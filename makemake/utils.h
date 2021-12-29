@@ -13,7 +13,7 @@
 namespace MakeMake
 {
 
-const size_t MAKEMAKE_IOBUFF_SIZE = 256;
+constexpr const size_t MAKEMAKE_IOBUFF_SIZE = 256;
 
 /**************************************
  * @brief 清楚字符串两端的空白字符
@@ -55,9 +55,17 @@ bool exist(const std::string& path) noexcept;
 /**************************************
  * @brief 将一组字符串展开成一个字符串
  * @param[in] strs 要展开的字符串vector
+ * @param[in] sp 插入的分割字符串
  * @return 展开的字符串
  * ************************************/
-bool strJoin(const std::vector<std::string>& strs) noexcept;
+std::string strJoin(const std::vector<std::string>& strs, const std::string& sp) noexcept;
+
+/**************************************
+ * @brief 读取整个文件
+ * @param[in] file 要读取的文件
+ * @return 读取到的内容
+ * ************************************/
+std::string readFile(const std::string& file) noexcept;
 
 }; // namespace MakeMake
 
