@@ -8,12 +8,6 @@ int main(int argc, char* argv[])
 {
     std::filesystem::path path{configFile};
 
-    if (argc > 2)
-    {
-        printf("Usage: %s [init]\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
     if (argc == 2 && std::string{argv[1]} == std::string{"init"})
     {
         MakeMake::Config config;
@@ -23,19 +17,17 @@ int main(int argc, char* argv[])
         MakeMake::writeFile("makemake.json", data);
         return EXIT_SUCCESS;
     }
-
-    if (!std::filesystem::exists(path)) // no makemake.json, default
+    else if (argc == 1 && !std::filesystem::exists(path)) // no makemake.json, default
     {
         auto sources = MakeMake::scan(std::filesystem::current_path(), {".c", ".cpp"});
 
         MakeMake::Target target;
         target.setName(std::filesystem::current_path().filename());
         target.setSources(sources);
-        printf("%s\n", target.makefile().c_str());
         MakeMake::writeFile("Makefile", target.makefile());
         return EXIT_SUCCESS;
     } 
-    else 
+    else if (argc == 1)
     {
         std::string install = "install: all\n";
         std::string all = "all: ";
@@ -47,13 +39,22 @@ int main(int argc, char* argv[])
         for (auto& target :targets)
         {
             all += target.name();
-            clean += "\t" + target.cmdClean();
-            install += "\t" + target.cmdInstall();
+            if (!target.cmdClean().empty())
+                clean += "\t" + target.cmdClean() + "\n";
+            if (!target.cmdInstall().empty())
+                install += "\t" + target.cmdInstall() + "\n";
             data += target.makefile();
         }
 
         data = MakeMake::strJoin({".PHONY: all install clean", all, install, clean, data}, "\n\n");
 
         MakeMake::writeFile("Makefile", data);
+    }
+    else
+    {
+        printf("Usage: \n");
+        printf("\t%s init : to generate a default 'makemake.json'\n", argv[0]);
+        printf("\t%s      : to generate 'Makefile' according to 'makemake.json'\n", argv[0]);
+        return EXIT_FAILURE;
     }
 }

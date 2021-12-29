@@ -217,6 +217,9 @@ std::string Target::makefile() const noexcept
  * *********************************/
 std::string Target::cmdInstall() const noexcept
 {
+    if (m_install.empty())
+        return "";
+
     switch (m_type)
     {
     case Type::executable:
