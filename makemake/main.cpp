@@ -22,23 +22,34 @@ int main(int argc, char* argv[])
 
     if (!std::filesystem::exists(path)) // no makemake.json, default
     {
-        auto sources = MakeMake::scan("./", {".c", ".cpp"});
+        auto sources = MakeMake::scan(std::filesystem::current_path(), {".c", ".cpp"});
 
         MakeMake::Target target;
         target.setName(std::filesystem::current_path().filename());
         target.setSources(sources);
-        target.setCxxflags("-Iinclude -std=c++17 -g");
-        target.setLibs("-lstdc++fs");
         printf("%s\n", target.makefile().c_str());
+        MakeMake::writeFile("Makefile", target.makefile());
         return EXIT_SUCCESS;
     } 
     else 
     {
+        std::string install = "install: all\n";
+        std::string all = "all: ";
+        std::string clean = "clean: \n";
+        std::string data;
         MakeMake::Config config;
+
         auto targets = config.load(path);
         for (auto& target :targets)
         {
-            printf("%s\n", target.makefile().c_str());
+            all += target.name();
+            clean += "\t" + target.cmdClean();
+            install += "\t" + target.cmdInstall();
+            data += target.makefile();
         }
+
+        data = MakeMake::strJoin({".PHONY: all install clean", all, install, clean, data}, "\n\n");
+
+        MakeMake::writeFile("Makefile", data);
     }
 }

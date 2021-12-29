@@ -10,7 +10,7 @@
             "ar" : "ar",
             "arflags" : "rcs",
             "libs" : "-lstdc++fs",
-            "install" : "<install path>",
+            "install" : "/usr/bin",
             "cmd" : "",
             "sources" : [
                 "config.cpp",  

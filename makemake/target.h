@@ -24,8 +24,8 @@ public:
     std::vector<std::string> sources() const noexcept;
     void setSources(const std::vector<std::string>& sources) noexcept;
 
-    std::vector<const Target*> depends() const noexcept;
-    void setDepends(const std::vector<const Target*>& depends) noexcept;
+    std::vector<std::string> depends() const noexcept;
+    void setDepends(const std::vector<std::string>& depends) noexcept;
 
     std::string cmd() const noexcept;
     void setCmd(const std::string& cmd) noexcept;
@@ -66,10 +66,22 @@ public:
      * *********************************/
     std::string makefile() const noexcept;
 
+    /***********************************
+     * @brief 生成 install 指令
+     * @return install 指令
+     * *********************************/
+    std::string cmdInstall() const noexcept;
+
+    /***********************************
+     * @brief 生成 clean 指令
+     * @return clean 指令
+     * *********************************/
+    std::string cmdClean() const noexcept;
+
 private:
     std::string m_name;
     std::vector<std::string> m_sources;
-    std::vector<const Target*> m_depends;
+    std::vector<std::string> m_depends;
     std::string m_cmd;
 
     std::string m_cc = "gcc";

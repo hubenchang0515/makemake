@@ -38,12 +38,12 @@ void Target::setSources(const std::vector<std::string>& sources) noexcept
     m_linker = m_cc;
 }
 
-std::vector<const Target*> Target::depends() const noexcept
+std::vector<std::string> Target::depends() const noexcept
 {
     return m_depends;
 }
 
-void Target::setDepends(const std::vector<const Target*>& depends) noexcept
+void Target::setDepends(const std::vector<std::string>& depends) noexcept
 {
     m_depends = depends;
 }
@@ -166,26 +166,40 @@ std::vector<std::string> Target::objects() const noexcept
 std::string Target::makefile() const noexcept
 {
     std::string str;
-    
     auto objs = strJoin(objects(), " ");
-    str += m_name + ": " + objs;
-    str += "\n\t";
-    str += m_linker + " -o $@ $^ " + m_libs + "\n";
+    auto deps = strJoin(m_depends, " ");
+    str += strJoin({m_name, ":", objs, deps, "\n"}, " ");
+
+    switch (m_type)
+    {
+    case Type::executable:
+        str += "\t" + strJoin({m_linker, "-o", "$@", "$^", m_libs, "\n\n"}, " ");
+        break;
+
+    case Type::shared:
+        str += "\t" + strJoin({m_linker, "--shared", "-o", "$@", "$^", m_libs, "\n\n"}, " ");
+        break;
+
+    case Type::archive:
+        str += "\t" + strJoin({m_ar, m_arflags, "$@", "$^", "\n\n"}, " ");
+        break;
+
+    case Type::other:
+        str += "\t" + strJoin({m_cmd, "\n\n"}, " ");
+    }
 
     for (const auto& src : m_sources)
     {
         std::filesystem::path path{src};
         if (path.extension() == ".c")
         {
-            str += rule(m_cc + " " + m_cflags, src);
-            str += "\n\t";
-            str += m_cc + " -c " + src + " " + m_cflags +"\n";
+            str += rule(m_cc + " " + m_cflags, src) + "\n";
+            str += "\t" + strJoin({m_cc, "-c", src, m_cflags, "\n\n"}, " ");
         }
         else if(cppExts.find(path.extension()) != cppExts.end())
         {
-            str += rule(m_cxx + " " + m_cxxflags, src);
-            str += "\n\t";
-            str += m_cxx + " -c " + src + " " + m_cxxflags +"\n";
+            str += rule(m_cxx + " " + m_cxxflags, src) + "\n";
+            str += "\t" + strJoin({m_cxx, "-c ", src, m_cxxflags, "\n\n"}, " ");
         }
         else
         {
@@ -195,6 +209,40 @@ std::string Target::makefile() const noexcept
     }
 
     return str;
+}
+
+/***********************************
+ * @brief 生成 install 指令
+ * @return install 指令
+ * *********************************/
+std::string Target::cmdInstall() const noexcept
+{
+    switch (m_type)
+    {
+    case Type::executable:
+        return strJoin({"install", "-m0755", m_name, m_install}, " ");
+
+    case Type::shared:
+        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+
+    case Type::archive:
+        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+
+    case Type::other:
+        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+    }
+
+    return "";
+}
+
+/***********************************
+ * @brief 生成 clean 指令
+ * @return clean 指令
+ * *********************************/
+std::string Target::cmdClean() const noexcept
+{
+    auto objs = strJoin(objects(), " ");
+    return strJoin({"rm", "-f", objs}, " ");
 }
 
 }; // namespace MakeMake

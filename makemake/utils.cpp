@@ -149,4 +149,23 @@ std::string readFile(const std::string& file) noexcept
     return ret;
 }
 
+/**************************************
+ * @brief 写文件
+ * @param[in] file 要读取的文件
+ * @param[in] data 要写的内容
+ * @return 读取到的内容
+ * ************************************/
+bool writeFile(const std::string& file, const std::string& data) noexcept
+{
+    FILE* fp = fopen(file.c_str(), "w");
+    if (fp == nullptr)
+    {
+        return false;
+    }
+
+    fwrite(data.c_str(), data.size(), 1, fp);
+    fclose(fp);
+    return true;
+}
+
 }; // namespace MakeMake

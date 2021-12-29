@@ -67,6 +67,14 @@ std::string strJoin(const std::vector<std::string>& strs, const std::string& sp)
  * ************************************/
 std::string readFile(const std::string& file) noexcept;
 
+/**************************************
+ * @brief 写文件
+ * @param[in] file 要读取的文件
+ * @param[in] data 要写的内容
+ * @return 读取到的内容
+ * ************************************/
+bool writeFile(const std::string& file, const std::string& data) noexcept;
+
 }; // namespace MakeMake
 
 #endif // MAKEMAKE_UTILS_H
