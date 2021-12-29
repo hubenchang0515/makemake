@@ -20,6 +20,11 @@ int main(int argc, char* argv[])
     else if (argc == 1 && !std::filesystem::exists(path)) // no makemake.json, default
     {
         auto sources = MakeMake::scan(std::filesystem::current_path(), {".c", ".cpp"});
+        if (sources.empty())
+        {
+            fprintf(stderr, "cannot find makemake.json or source files.\n");
+            return EXIT_FAILURE;
+        }
 
         MakeMake::Target target;
         target.setName(std::filesystem::current_path().filename());
