@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         auto targets = config.load(path);
         for (auto& target :targets)
         {
-            all += target.name();
+            all += target.name() + " ";
             if (!target.cmdClean().empty())
                 clean += "\t" + target.cmdClean() + "\n";
             if (!target.cmdInstall().empty())

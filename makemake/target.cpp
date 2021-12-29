@@ -118,6 +118,16 @@ void Target::setArflags(const std::string& arflags) noexcept
     m_arflags = arflags;
 }
 
+Target::Type Target::type() const noexcept
+{
+    return m_type;
+}
+
+void Target::setType(Target::Type type) noexcept
+{
+    m_type = type;
+}
+
 std::string Target::libs() const noexcept
 {
     return m_libs;
@@ -186,6 +196,7 @@ std::string Target::makefile() const noexcept
 
     case Type::other:
         str += "\t" + strJoin({m_cmd, "\n\n"}, " ");
+        return str;
     }
 
     for (const auto& src : m_sources)
@@ -245,6 +256,8 @@ std::string Target::cmdInstall() const noexcept
 std::string Target::cmdClean() const noexcept
 {
     auto objs = strJoin(objects(), " ");
+    if (objs.empty())
+        return "";
     return strJoin({"rm", "-f", objs}, " ");
 }
 

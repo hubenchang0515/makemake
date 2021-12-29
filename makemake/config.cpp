@@ -32,12 +32,12 @@ std::vector<Target> Config::load(const std::string& file) const noexcept
 }
 
 /**************************************
-     * @brief 生成默认的配置文件
-     * @param[in] name 目标名称
-     * @param[in] sources 源文件
-     * @return 生成的配置数据
-     * ************************************/
-    std::string Config::init(const std::string& name, const std::vector<std::string>& sources) const noexcept
+ * @brief 生成默认的配置文件
+ * @param[in] name 目标名称
+ * @param[in] sources 源文件
+ * @return 生成的配置数据
+ * ************************************/
+std::string Config::init(const std::string& name, const std::vector<std::string>& sources) const noexcept
 {
     rapidjson::StringBuffer strBuf;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(strBuf);
@@ -166,6 +166,24 @@ void Config::loadTarget(Target& target, const rapidjson::Value& doc) const noexc
         target.setInstall(get(doc, "install"));
     }
 
+    if (get(doc, "cmd") != "")
+    {
+        target.setCmd(get(doc, "cmd"));
+    }
+
+    if (get(doc, "type") != "")
+    {
+        static std::map<std::string, Target::Type> types{
+            {"executable", Target::Type::executable},
+            {"shared", Target::Type::shared},
+            {"archive", Target::Type::archive},
+            {"other", Target::Type::other},
+        };
+
+        target.setType(types[get(doc, "type")]);
+    }
+    
+
     if (doc.HasMember("sources") && doc["sources"].IsArray())
     {
         auto sourcesDoc = doc["sources"].GetArray();
@@ -176,7 +194,7 @@ void Config::loadTarget(Target& target, const rapidjson::Value& doc) const noexc
         }
         target.setSources(sources);
     }
-    else
+    else if (target.type() != Target::Type::other)
     {
         fprintf(stderr, "%s has no sources.\n", target.name().c_str());
     }

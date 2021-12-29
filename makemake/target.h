@@ -48,6 +48,9 @@ public:
     std::string arflags() const noexcept;
     void setArflags(const std::string& arflags) noexcept;
 
+    Type type() const noexcept;
+    void setType(Type type) noexcept;
+
     std::string libs() const noexcept;
     void setLibs(const std::string& cxxflags) noexcept;
 
