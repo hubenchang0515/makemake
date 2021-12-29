@@ -24,7 +24,8 @@ int main(int argc, char* argv[])
         MakeMake::Target target;
         target.setName(std::filesystem::current_path().filename());
         target.setSources(sources);
-        MakeMake::writeFile("Makefile", target.makefile());
+        auto data = target.makefile() + "clean:\n\t" + target.cmdClean();
+        MakeMake::writeFile("Makefile", data);
         return EXIT_SUCCESS;
     } 
     else if (argc == 1)
