@@ -5,7 +5,7 @@ all: makemake
 install: all
 	install -m0755 makemake /usr/bin
 
-clean: 
+clean:
 	rm -f config.o main.o target.o utils.o
 
 makemake : config.o main.o target.o utils.o  

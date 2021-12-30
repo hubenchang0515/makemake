@@ -3,9 +3,6 @@
 namespace MakeMake
 {
 
-static const std::set<std::string> cppExts = {".cpp"};
-static const std::set<std::string> srcExts = {".c", ".cpp"};
-
 std::string Target::name() const noexcept
 {
     return m_name;
