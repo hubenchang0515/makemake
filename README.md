@@ -9,9 +9,9 @@ Makemake is used to make makefile of tiny project - 用于小型项目的 Makefi
 $ makemake init
 ```
 
-It will generate an `makemake.json` including all source file (`.c`, `.cpp`) of the directory.  
+It will generate an `makemake.json` template. It will name target same as the directory name, set default compiler and flags, and include all source file (`.c`, `.cpp`) of the directory.  
 
-它将生成一个包含当前目录下的所有源文件(`.c`，`.cpp`)的 `makemake.json` 。  
+它将生成 `makemake.json` 的模板，它将目标命名为目录名，设置默认的编译器和编译选项，并包含当前目录下的所有源文件(`.c`，`.cpp`)。  
 
 ### Generate Makefile / 生成 Makefile
 
