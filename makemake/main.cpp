@@ -9,8 +9,8 @@ int main(int argc, char* argv[])
     if (argc == 2 && std::string{argv[1]} == std::string{"init"})
     {
         MakeMake::Config config;
-        auto name = std::filesystem::current_path().filename();
-        auto sources = MakeMake::scan(std::filesystem::current_path(), MakeMake::srcExts);
+        auto name = std::filesystem::current_path().filename().string();
+        auto sources = MakeMake::scan(std::filesystem::current_path().string(), MakeMake::srcExts);
         auto data = config.init(name, sources);
         MakeMake::writeFile("makemake.json", data);
         return EXIT_SUCCESS;
@@ -21,20 +21,20 @@ int main(int argc, char* argv[])
         std::vector<MakeMake::Target> targets;
         if (!std::filesystem::exists(path)) // no makemake.json
         {
-            auto sources = MakeMake::scan(std::filesystem::current_path(), MakeMake::srcExts);
+            auto sources = MakeMake::scan(std::filesystem::current_path().string(), MakeMake::srcExts);
             if (sources.empty())
             {
                 fprintf(stderr, "cannot find makemake.json or source files.\n");
                 return EXIT_FAILURE;
             }
             auto& target = targets.emplace_back();
-            target.setName(std::filesystem::current_path().filename());
+            target.setName(std::filesystem::current_path().filename().string());
             target.setSources(sources);
         }
         else
         {
             MakeMake::Config config;
-            targets = config.load(path);
+            targets = config.load(path.string());
         }
 
         std::string install = "install: all";

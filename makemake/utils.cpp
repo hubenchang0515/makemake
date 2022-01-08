@@ -67,24 +67,24 @@ std::vector<std::string> scan(const std::string& dir, const std::set<std::string
     std::filesystem::path path{dir};
     if (!std::filesystem::exists(path))
     {
-        fprintf(stderr, "%s is not exist.\n", path.c_str());
+        fprintf(stderr, "%s is not exist.\n", dir.c_str());
         return files;
     }
 
     std::filesystem::directory_entry entry{path};
     if (entry.status().type() != std::filesystem::file_type::directory)
     {
-        fprintf(stderr, "%s is not a directory.\n", path.c_str());
+        fprintf(stderr, "%s is not a directory.\n", dir.c_str());
         return files;
     }
 
     std::filesystem::directory_iterator iter{path};
     for (auto& file : iter)
     {
-        if (exts.find(file.path().extension()) == exts.end())
+        if (exts.find(file.path().extension().string()) == exts.end())
             continue;
 
-        files.emplace_back(file.path().filename());
+        files.emplace_back(file.path().filename().string());
     }
 
     return files;

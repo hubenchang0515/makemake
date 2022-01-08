@@ -25,7 +25,7 @@ void Target::setSources(const std::vector<std::string>& sources) noexcept
     for (auto& s :m_sources)
     {
         std::filesystem::path path{s};
-        if (cppExts.find(path.extension()) != cppExts.end())
+        if (cppExts.find(path.extension().string()) != cppExts.end())
         {
             m_linker = m_cxx;
             return;
@@ -155,7 +155,7 @@ std::vector<std::string> Target::objects() const noexcept
     for (auto& src : m_sources)
     {
         std::filesystem::path path{src};
-        if (srcExts.find(path.extension()) == srcExts.end())
+        if (srcExts.find(path.extension().string()) == srcExts.end())
         {
             fprintf(stderr, "unknow file '%s'\n", src.c_str());
             continue;
@@ -204,7 +204,7 @@ std::string Target::makefile() const noexcept
             str += rule(m_cc + " " + m_cflags, src) + "\n";
             str += "\t" + strJoin({m_cc, "-c", src, m_cflags, "\n\n"}, " ");
         }
-        else if(cppExts.find(path.extension()) != cppExts.end())
+        else if(cppExts.find(path.extension().string()) != cppExts.end())
         {
             str += rule(m_cxx + " " + m_cxxflags, src) + "\n";
             str += "\t" + strJoin({m_cxx, "-c ", src, m_cxxflags, "\n\n"}, " ");
