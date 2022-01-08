@@ -255,7 +255,11 @@ std::string Target::cmdClean() const noexcept
     auto objs = strJoin(objects(), " ");
     if (objs.empty())
         return "";
+#ifndef _WIN32
     return strJoin({"rm", "-f", objs}, " ");
+#else
+    return strJoin({"del", "/Q", objs}, " ");
+#endif
 }
 
 }; // namespace MakeMake
