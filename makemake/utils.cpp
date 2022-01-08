@@ -28,7 +28,7 @@ std::string execute(const std::string& cmd) noexcept
     FILE* fp = popen(cmd.c_str(), "r");
 #else
     FILE* fp = _popen(cmd.c_str(), "r");
-#endif WIN32
+#endif // _WIN32
     if (fp == nullptr)
     {
         return "";

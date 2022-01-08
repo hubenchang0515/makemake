@@ -259,7 +259,7 @@ std::string Target::cmdClean() const noexcept
     return strJoin({"rm", "-f", objs}, " ");
 #else
     return strJoin({"del", "/Q", objs}, " ");
-#endif
+#endif // _WIN32
 }
 
 }; // namespace MakeMake
