@@ -42,7 +42,12 @@ std::string execute(const std::string& cmd) noexcept
         ret.append(buff, len);
     }while(!feof(fp));
 
-    fclose(fp);
+#ifndef _WIN32
+    pclose(fp);
+#else
+    _pclose(fp);
+#endif // _WIN32
+    
 
     return ret;
 }
