@@ -1,5 +1,4 @@
 #include "utils.h"
-#include "platform.h"
 
 namespace MakeMake
 {

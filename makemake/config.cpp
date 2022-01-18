@@ -1,6 +1,5 @@
 #include "config.h"
 #include "utils.h"
-#include "platform.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>

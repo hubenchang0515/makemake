@@ -1,6 +1,8 @@
 #ifndef MAKEMAKE_UTILS_H
 #define MAKEMAKE_UTILS_H
 
+#include "platform.h"
+
 #include <cstdio>
 #include <cstdint>
 #include <cstddef>

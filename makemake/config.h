@@ -1,6 +1,8 @@
 #ifndef MAKEMAKE_CONFIG_H
 #define MAKEMAKE_CONFIG_H
 
+#include "platform.h"
+
 #include <map>
 
 #include <rapidjson/document.h>
