@@ -3,156 +3,51 @@
 namespace MakeMake
 {
 
-std::string Target::name() const noexcept
+std::any Target::get(const std::string& key) const noexcept
 {
-    return m_name;
+    auto value = m_datas.find(key);
+    if (value != m_datas.end())
+        return value->second;
+    return nullptr;
 }
 
-void Target::setName(const std::string& name) noexcept
+void Target::set(const std::string& key, const std::any& value) noexcept
 {
-    m_name = name;
+    m_datas[key] = value;
 }
 
-std::vector<std::string> Target::sources() const noexcept
+std::string Target::getString(const std::string& key) const noexcept
 {
-    return m_sources;
-}
-
-void Target::setSources(const std::vector<std::string>& sources) noexcept
-{
-    
-    m_sources = sources;
-    for (auto& s :m_sources)
+    try
     {
-        std::filesystem::path path{s};
-        if (cppExts.find(path.extension().string()) != cppExts.end())
-        {
-            m_linker = m_cxx;
-            return;
-        }
+        return std::any_cast<std::string>(get(key));
+    }
+    catch(std::bad_any_cast&)
+    {
+        return "";
+    }
+}
+std::vector<std::string> Target::getStrVec(const std::string& key) const noexcept
+{
+    try
+    {
+        return std::any_cast<std::vector<std::string>>(get(key));
+    }
+    catch(std::bad_any_cast&)
+    {
+        return {};
     }
 
-    m_linker = m_cc;
-}
-
-std::vector<std::string> Target::depends() const noexcept
-{
-    return m_depends;
-}
-
-void Target::setDepends(const std::vector<std::string>& depends) noexcept
-{
-    m_depends = depends;
-}
-
-std::string Target::cmd() const noexcept
-{
-    return m_cmd;
-}
-
-void Target::setCmd(const std::string& cmd) noexcept
-{
-    m_cmd = cmd;
-}
-
-std::string Target::cc() const noexcept
-{
-    return m_cc;
-}
-
-void Target::setCc(const std::string& cc) noexcept
-{
-    m_cc = cc;
-}
-
-std::string Target::cxx() const noexcept
-{
-    return m_cxx;
-}
-
-void Target::setCxx(const std::string& cxx) noexcept
-{
-    m_cxx = cxx;
-}
-
-std::string Target::cflags() const noexcept
-{
-    return m_cflags;
-}
-
-void Target::setCflags(const std::string& cflags) noexcept
-{
-    m_cflags = cflags;
-}
-
-std::string Target::cxxflags() const noexcept
-{
-    return m_cxxflags;
-}
-
-void Target::setCxxflags(const std::string& cxxflags) noexcept
-{
-    m_cxxflags = cxxflags;
-}
-
-std::string Target::ar() const noexcept
-{
-    return m_ar;
-}
-
-void Target::setAr(const std::string& ar) noexcept
-{
-    m_ar = ar;
-}
-
-std::string Target::arflags() const noexcept
-{
-    return m_arflags;
-}
-
-void Target::setArflags(const std::string& arflags) noexcept
-{
-    m_arflags = arflags;
-}
-
-Target::Type Target::type() const noexcept
-{
-    return m_type;
-}
-
-void Target::setType(Target::Type type) noexcept
-{
-    m_type = type;
-}
-
-std::string Target::libs() const noexcept
-{
-    return m_libs;
-}
-
-void Target::setLibs(const std::string& libs) noexcept
-{
-    m_libs = libs;
-}
-
-std::string Target::install() const noexcept
-{
-    return m_install;
-}
-
-void Target::setInstall(const std::string& install) noexcept
-{
-    m_install = install;
 }
 
 /**********************************************
  * @brief 根据 sources 生成 objects 列表
  * @return objects 列表
  * ********************************************/
-std::vector<std::string> Target::objects() const noexcept
+std::vector<std::string> Target::objects() noexcept
 {
     std::vector<std::string> objs;
-    for (auto& src : m_sources)
+    for (auto& src : getStrVec("sources"))
     {
         std::filesystem::path path{src};
         if (srcExts.find(path.extension().string()) == srcExts.end())
@@ -170,44 +65,45 @@ std::vector<std::string> Target::objects() const noexcept
  * @brief 生成 Makefile 的内容
  * @return Makefile 的内容
  * *********************************/
-std::string Target::makefile() const noexcept
+std::string Target::makefile() noexcept
 {
     std::string str;
     auto objs = strJoin(objects(), " ");
-    auto deps = strJoin(m_depends, " ");
-    str += strJoin({m_name, ":", objs, deps, "\n"}, " ");
+    auto deps = strJoin(getStrVec("depends"), " ");
+    str += strJoin({getString("name"), ":", objs, deps, "\n"}, " ");
+    auto linker = m_linker();
 
-    switch (m_type)
+    switch (std::any_cast<Type>(m_datas["type"]))
     {
     case Type::executable:
-        str += "\t" + strJoin({m_linker, "-o", "$@", "$^", m_libs, "\n\n"}, " ");
+        str += "\t" + strJoin({linker, "-o", "$@", "$^", getString("libs"), "\n\n"}, " ");
         break;
 
     case Type::shared:
-        str += "\t" + strJoin({m_linker, "--shared", "-o", "$@", "$^", m_libs, "\n\n"}, " ");
+        str += "\t" + strJoin({linker, "--shared", "-o", "$@", "$^", getString("libs"), "\n\n"}, " ");
         break;
 
     case Type::archive:
-        str += "\t" + strJoin({m_ar, m_arflags, "$@", "$^", "\n\n"}, " ");
+        str += "\t" + strJoin({getString("ar"), getString("arflags"), "$@", "$^", "\n\n"}, " ");
         break;
 
     case Type::other:
-        str += "\t" + strJoin({m_cmd, "\n\n"}, " ");
+        str += "\t" + strJoin({getString("cmd"), "\n\n"}, " ");
         return str;
     }
 
-    for (const auto& src : m_sources)
+    for (const auto& src : getStrVec("sources"))
     {
         std::filesystem::path path{src};
         if (path.extension() == ".c")
         {
-            str += rule(m_cc + " " + m_cflags, src) + "\n";
-            str += "\t" + strJoin({m_cc, "-c", src, m_cflags, "\n\n"}, " ");
+            str += rule(getString("cc") + " " + getString("cflags"), src) + "\n";
+            str += "\t" + strJoin({getString("cc"), "-c", src, getString("cflags"), "\n\n"}, " ");
         }
         else if(cppExts.find(path.extension().string()) != cppExts.end())
         {
-            str += rule(m_cxx + " " + m_cxxflags, src) + "\n";
-            str += "\t" + strJoin({m_cxx, "-c ", src, m_cxxflags, "\n\n"}, " ");
+            str += rule(getString("cxx") + " " + getString("cxxflags"), src) + "\n";
+            str += "\t" + strJoin({getString("cxx"), "-c ", src, getString("cxxflags"), "\n\n"}, " ");
         }
         else
         {
@@ -223,24 +119,24 @@ std::string Target::makefile() const noexcept
  * @brief 生成 install 指令
  * @return install 指令
  * *********************************/
-std::string Target::cmdInstall() const noexcept
+std::string Target::cmdInstall() noexcept
 {
-    if (m_install.empty())
+    if (getString("install").empty())
         return "";
 
-    switch (m_type)
+    switch (std::any_cast<Type>(m_datas["type"]))
     {
     case Type::executable:
-        return strJoin({"install", "-m0755", m_name, m_install}, " ");
+        return strJoin({"install", "-m0755", getString("name"), getString("install")}, " ");
 
     case Type::shared:
-        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
 
     case Type::archive:
-        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
 
     case Type::other:
-        return strJoin({"install", "-m0644", m_name, m_install}, " ");
+        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
     }
 
     return "";
@@ -250,7 +146,7 @@ std::string Target::cmdInstall() const noexcept
  * @brief 生成 clean 指令
  * @return clean 指令
  * *********************************/
-std::string Target::cmdClean() const noexcept
+std::string Target::cmdClean() noexcept
 {
     auto objs = strJoin(objects(), " ");
     if (objs.empty())
@@ -260,6 +156,24 @@ std::string Target::cmdClean() const noexcept
 #else
     return strJoin({"del", "/Q", objs}, " ");
 #endif // _WIN32
+}
+
+/***********************************
+ * @brief 获取连接器
+ * @return 连接器
+ * *********************************/
+std::string Target::m_linker() const noexcept
+{
+    for (const auto& s : getStrVec("sources"))
+    {
+        std::filesystem::path path{s};
+        if (cppExts.find(path.extension()) != cppExts.end())
+        {
+            return getString("cxx");
+        }
+    }
+
+    return getString("cc");
 }
 
 }; // namespace MakeMake

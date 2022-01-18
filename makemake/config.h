@@ -32,10 +32,10 @@ private:
     /**************************************
      * @brief 加载目标
      * @param[in] target 将配置写入这个目标
-     * @param[in] doc JSON子文档
+     * @param[in] json JSON子文档
      * @return 构建目标
      * ************************************/
-    void loadTarget(Target& target, const rapidjson::Value& doc) const noexcept;
+    void loadTarget(Target& target, const rapidjson::Value& json) const noexcept;
 }; // class Config
 
 }; // namespace MakeMake

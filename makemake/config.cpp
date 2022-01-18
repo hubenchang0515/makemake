@@ -1,5 +1,6 @@
 #include "config.h"
 #include "utils.h"
+#include "platform.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -108,70 +109,38 @@ std::string Config::init(const std::string& name, const std::vector<std::string>
  * @param[in] doc JSON子文档
  * @return 构建目标
  * ************************************/
-void Config::loadTarget(Target& target, const rapidjson::Value& doc) const noexcept
+void Config::loadTarget(Target& target, const rapidjson::Value& json) const noexcept
 {
-    auto get = [](const rapidjson::Value& json, const char* key) -> std::string{
-        if (json.HasMember(key) && json[key].IsString())
-            return json[key].GetString();
-        else
-            return "";
+    auto getString = [&json](const std::string& key) -> std::string{
+        auto keyOs = key + "." + OS_NAME;
+        if (json.HasMember(keyOs.c_str()) && json[keyOs.c_str()].IsString())
+            return json[keyOs.c_str()].GetString();
+        
+        if (json.HasMember(key.c_str()) && json[key.c_str()].IsString())
+            return json[key.c_str()].GetString();
+        
+        return "";
     };
 
-    if (get(doc, "name") != "")
+    auto configString = [&target, &getString](const std::string& key) {
+        std::string value = getString(key);
+        if (value == "")
+            return;
+        target.set(key, value);
+    };
+
+    static std::vector<std::string> configStringList = {
+        "name", "cc", "cxx", "cflags", "cxxflags",
+        "ar", "arflags", "libs", "install", "cmd", 
+        "type"
+    };
+
+    for (auto& key : configStringList)
     {
-        target.setName(get(doc, "name"));
-    }
-    else
-    {
-        fprintf(stderr, "target has no name.\n");
+        configString(key);
     }
 
-    if (get(doc, "cc") != "")
-    {
-        target.setCc(get(doc, "cc"));
-    }
-
-    if (get(doc, "cxx") != "")
-    {
-        target.setCxx(get(doc, "cxx"));
-    }
-
-    if (get(doc, "cflags") != "")
-    {
-        target.setCflags(get(doc, "cflags"));
-    }
-
-    if (get(doc, "cxxflags") != "")
-    {
-        target.setCxxflags(get(doc, "cxxflags"));
-    }
-
-    if (get(doc, "ar") != "")
-    {
-        target.setAr(get(doc, "ar"));
-    }
-
-    if (get(doc, "arflags") != "")
-    {
-        target.setArflags(get(doc, "arflags"));
-    }
-
-    if (get(doc, "libs") != "")
-    {
-        target.setLibs(get(doc, "libs"));
-    }
-
-    if (get(doc, "install") != "")
-    {
-        target.setInstall(get(doc, "install"));
-    }
-
-    if (get(doc, "cmd") != "")
-    {
-        target.setCmd(get(doc, "cmd"));
-    }
-
-    if (get(doc, "type") != "")
+    if (getString("type") != "")
     {
         static std::map<std::string, Target::Type> types{
             {"executable", Target::Type::executable},
@@ -179,36 +148,31 @@ void Config::loadTarget(Target& target, const rapidjson::Value& doc) const noexc
             {"archive", Target::Type::archive},
             {"other", Target::Type::other},
         };
-
-        target.setType(types[get(doc, "type")]);
+        target.set("type", types[getString("type")]);
     }
-    
 
-    if (doc.HasMember("sources") && doc["sources"].IsArray())
-    {
-        auto sourcesDoc = doc["sources"].GetArray();
-        std::vector<std::string> sources;
-        for (auto& s : sourcesDoc)
+    auto getStrVec = [&json](const std::string& key) -> std::vector<std::string>{
+        auto keyOs = key + "." + OS_NAME;
+        std::string keySelect;
+        if (json.HasMember(keyOs.c_str()) && json[keyOs.c_str()].IsArray())
+            keySelect = keyOs;
+        else if (json.HasMember(key.c_str()) && json[key.c_str()].IsArray())
+            keySelect = key;
+        else
+            return {};
+
+        auto jsonArray = json[keySelect.c_str()].GetArray();
+        std::vector<std::string> strVec;
+        for (auto& s : jsonArray)
         {
-            sources.emplace_back(s.GetString());
+            strVec.emplace_back(s.GetString());
         }
-        target.setSources(sources);
-    }
-    else if (target.type() != Target::Type::other)
-    {
-        fprintf(stderr, "%s has no sources.\n", target.name().c_str());
-    }
 
-    if (doc.HasMember("depends") && doc["depends"].IsArray())
-    {
-        auto dependsDoc = doc["depends"].GetArray();
-        std::vector<std::string> depends;
-        for (auto& s : dependsDoc)
-        {
-            depends.emplace_back(s.GetString());
-        }
-        target.setDepends(depends);
-    }
+        return strVec;
+    };
+
+    target.set("sources", getStrVec("sources"));
+    target.set("depends", getStrVec("depends"));
 }
 
 
