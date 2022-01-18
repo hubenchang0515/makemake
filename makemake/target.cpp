@@ -151,11 +151,11 @@ std::string Target::cmdClean() noexcept
     auto objs = strJoin(objects(), " ");
     if (objs.empty())
         return "";
-#ifndef _WIN32
+#ifndef MAKEMAKE_WINDOWS
     return strJoin({"rm", "-f", objs}, " ");
 #else
     return strJoin({"del", "/Q", objs}, " ");
-#endif // _WIN32
+#endif // MAKEMAKE_WINDOWS
 }
 
 /***********************************
@@ -167,7 +167,7 @@ std::string Target::m_linker() const noexcept
     for (const auto& s : getStrVec("sources"))
     {
         std::filesystem::path path{s};
-        if (cppExts.find(path.extension()) != cppExts.end())
+        if (cppExts.find(path.extension().string()) != cppExts.end())
         {
             return getString("cxx");
         }

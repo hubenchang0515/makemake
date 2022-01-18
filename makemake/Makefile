@@ -58,6 +58,6 @@ main.o: main.cpp utils.h target.h config.h include/rapidjson/document.h \
 target.o: target.cpp target.h utils.h
 	g++ -c  target.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 
-utils.o: utils.cpp utils.h
+utils.o: utils.cpp utils.h platform.h
 	g++ -c  utils.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "platform.h"
 
 namespace MakeMake
 {
@@ -24,11 +25,11 @@ std::string trimSpace(const std::string& str) noexcept
  * ************************************/
 std::string execute(const std::string& cmd) noexcept
 {
-#ifndef _WIN32
+#ifndef MAKEMAKE_WINDOWS
     FILE* fp = popen(cmd.c_str(), "r");
 #else
     FILE* fp = _popen(cmd.c_str(), "r");
-#endif // _WIN32
+#endif // MAKEMAKE_WINDOWS
     if (fp == nullptr)
     {
         return "";
@@ -42,11 +43,11 @@ std::string execute(const std::string& cmd) noexcept
         ret.append(buff, len);
     }while(!feof(fp));
 
-#ifndef _WIN32
+#ifndef MAKEMAKE_WINDOWS
     pclose(fp);
 #else
     _pclose(fp);
-#endif // _WIN32
+#endif // MAKEMAKE_WINDOWS
     
 
     return ret;
