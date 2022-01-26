@@ -1,7 +1,9 @@
 #ifndef MAKEMAKE_TARGET_H
 #define MAKEMAKE_TARGET_H
 
+#include "platform.h"
 #include "utils.h"
+
 #include <map>
 #include <any>
 
