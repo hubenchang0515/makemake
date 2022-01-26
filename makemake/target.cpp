@@ -3,6 +3,20 @@
 namespace MakeMake
 {
 
+Target::Target() noexcept 
+{
+    set("cc", std::string{"gcc"});
+    set("cxx", std::string("g++"));
+    set("cflags", std::string(""));
+    set("cxxflags", std::string(""));
+    set("ar", std::string("ar"));
+    set("arflags", std::string("rcs"));
+    set("type", MakeMake::Target::Type::executable);
+    set("libs", std::string(""));
+    set("install", std::string(""));
+    set("cmd", std::string(""));
+}
+
 std::any Target::get(const std::string& key) const noexcept
 {
     auto value = m_datas.find(key);

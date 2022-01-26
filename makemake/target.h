@@ -20,6 +20,9 @@ public:
         other,
     };
 
+    Target() noexcept;
+    ~Target() noexcept = default;
+
     std::any get(const std::string& key) const noexcept;
     void set(const std::string& key, const std::any& value) noexcept;
 
