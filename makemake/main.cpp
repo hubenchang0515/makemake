@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
         std::string clean = "clean:";
         for (auto& target :targets)
         {
+            target.parseDir();
             all += " " + std::any_cast<std::string>(target.get("name"));
             if (!target.cmdClean().empty())
                 clean += "\n\t" + target.cmdClean();

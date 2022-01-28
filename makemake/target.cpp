@@ -51,7 +51,35 @@ std::vector<std::string> Target::getStrVec(const std::string& key) const noexcep
     {
         return {};
     }
+}
 
+/***********************************
+ * @brief 解析 sources 中包含的文件夹
+ * *********************************/
+void Target::parseDir() noexcept
+{
+    auto sources = getStrVec("sources");
+    decltype(sources) newSources;
+
+    for (auto& src : sources)
+    {
+        std::filesystem::path path{src};
+        if (std::filesystem::is_directory(path))
+        {
+            auto found = scan(path.string(), MakeMake::srcExts);
+            for (auto s : found)
+            {
+                auto dir = path;
+                newSources.push_back(dir.append(s).string());
+            }
+        }
+        else
+        {
+            newSources.push_back(src);
+        }
+    }
+
+    set("sources", newSources);
 }
 
 /**********************************************

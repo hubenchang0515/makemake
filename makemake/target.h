@@ -32,6 +32,11 @@ public:
     std::vector<std::string> getStrVec(const std::string& key) const noexcept;
 
     /***********************************
+     * @brief 解析 sources 中包含的文件夹
+     * *********************************/
+    void parseDir() noexcept;
+
+    /***********************************
      * @brief 根据 sources 生成 objects 列表
      * @return objects 列表
      * *********************************/

@@ -7,19 +7,19 @@ namespace MakeMake
 // GCC: https://sourceforge.net/p/predef/wiki/OperatingSystems/
 #if defined(__ANDROID__) || defined(__ANDROID_API__)
     #define MAKEMAKE_ANDROID
-    static const char* OS_NAME = "android";
+    #define OS_NAME "android"
 #elif defined(__linux__) || defined(linux) || defined(__linux)
     #define MAKEMAKE_LINUX
-    static const char* OS_NAME = "linux";
+    #define OS_NAME "linux"
 #elif defined(macintosh) || defined(Macintosh) || (defined(__APPLE__) && defined(__MACH__))
     #define MAKEMAKE_MAC
-    static const char* OS_NAME = "mac";
+    #define OS_NAME "mac"
 #elif defined(BSD) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
     #define MAKEMAKE_BSD
-    static const char* OS_NAME = "bsd";
+    #define OS_NAME "bsd"
 #elif defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
     #define MAKEMAKE_WINDOWS
-    static const char* OS_NAME = "windows";
+    #define OS_NAME "windows"
 #endif
 
 }; // namespace MakeMake
