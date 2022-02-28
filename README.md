@@ -30,7 +30,7 @@ If there is a `makemake.json` in the working directory, it will generate a `Make
     "targets" : [
         {
             "name" : "<target name>",
-            "type" : "[executable | shared | archive | other]",
+            "type" : "[executable | shared | archive | install | other]",
             "cc" : "<C compiler>",
             "cxx" : "<C++ compiler>",
             "cflags" : "<C compiling flags>",

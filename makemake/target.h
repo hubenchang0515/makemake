@@ -19,6 +19,7 @@ public:
         executable = 0,
         shared,
         archive,
+        install,
         other,
     };
 
