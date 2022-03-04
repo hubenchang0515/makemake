@@ -194,6 +194,41 @@ std::string Target::cmdInstall() noexcept
 }
 
 /***********************************
+ * @brief 生成 uninstall 指令
+ * @return uninstall 指令
+ * *********************************/
+std::string Target::cmdUninstall() noexcept
+{
+    if (getString("install").empty())
+        return "";
+
+#ifndef MAKEMAKE_WINDOWS
+    std::string cmd = strJoin({"\t", "rm", "-f"}, " ");
+    std::string junk = strJoin({getString("install"), getString("name")}, "/");
+#else
+    std::string cmd = strJoin({"\t", "del", "/Q"}, " ");
+    std::string junk = strJoin({getString("install"), getString("name")}, "\\");
+#endif // MAKEMAKE_WINDOWS
+
+    switch (std::any_cast<Type>(m_datas["type"]))
+    {
+    case Type::executable:
+        return strJoin({"\t", cmd, junk}, " ");
+
+    case Type::shared:
+        return strJoin({"\t", cmd, junk}, " ");
+
+    case Type::archive:
+        return strJoin({"\t", cmd, junk}, " ");
+
+    case Type::other:
+        return strJoin({"\t", cmd, junk}, " ");
+    }
+
+    return "";
+}
+
+/***********************************
  * @brief 生成 clean 指令
  * @return clean 指令
  * *********************************/
