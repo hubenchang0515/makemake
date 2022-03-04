@@ -166,22 +166,31 @@ std::string Target::cmdInstall() noexcept
     if (getString("install").empty())
         return "";
 
+    std::string install = strJoin({"\t", "mkdir", "-p", getString("install"), "\n"}, " ");
+
     switch (std::any_cast<Type>(m_datas["type"]))
     {
     case Type::executable:
-        return strJoin({"install", "-m0755", getString("name"), getString("install")}, " ");
+        install += strJoin({"\t", "install", "-m0755", getString("name"), getString("install")}, " ");
+        break;
 
     case Type::shared:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
+        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
+        break;
 
     case Type::archive:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
+        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
+        break;
 
     case Type::other:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
+        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
+        break;
+
+    default:
+        return "";
     }
 
-    return "";
+    return install;
 }
 
 /***********************************
@@ -190,13 +199,18 @@ std::string Target::cmdInstall() noexcept
  * *********************************/
 std::string Target::cmdClean() noexcept
 {
-    auto objs = strJoin(objects(), " ");
-    if (objs.empty())
+    std::string junk;
+    if (std::any_cast<Type>(m_datas["type"]) == Type::other)
+        junk = getString("name");
+    else
+        junk = strJoin(objects(), " ");
+
+    if (junk.empty())
         return "";
 #ifndef MAKEMAKE_WINDOWS
-    return strJoin({"rm", "-f", objs}, " ");
+    return strJoin({"\t", "rm", "-f", junk}, " ");
 #else
-    return strJoin({"del", "/Q", objs}, " ");
+    return strJoin({"\t", "del", "/Q", junk}, " ");
 #endif // MAKEMAKE_WINDOWS
 }
 

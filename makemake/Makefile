@@ -5,10 +5,11 @@
 all: makemake
 
 install: all
-	install -m0755 makemake /usr/bin
+	 mkdir -p /usr/bin 
+	 install -m0755 makemake /usr/bin
 
 clean:
-	rm -f config.o main.o target.o utils.o
+	 rm -f config.o main.o target.o utils.o
 
 makemake : config.o main.o target.o utils.o  
 	g++ -o $@ $^ -lstdc++fs 

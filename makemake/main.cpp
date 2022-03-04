@@ -47,9 +47,9 @@ int main(int argc, char* argv[])
             target.parseDir();
             all += " " + std::any_cast<std::string>(target.get("name"));
             if (!target.cmdClean().empty())
-                clean += "\n\t" + target.cmdClean();
+                clean += "\n" + target.cmdClean();
             if (!target.cmdInstall().empty())
-                install += "\n\t" + target.cmdInstall();
+                install += "\n" + target.cmdInstall();
             data += target.makefile();
         }
         data = MakeMake::strJoin({
