@@ -145,7 +145,6 @@ void Config::loadTarget(Target& target, const rapidjson::Value& json) const noex
             {"executable", Target::Type::executable},
             {"shared", Target::Type::shared},
             {"archive", Target::Type::archive},
-            {"install", Target::Type::install},
             {"other", Target::Type::other},
         };
         target.set("type", types[getString("type")]);

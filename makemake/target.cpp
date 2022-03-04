@@ -129,7 +129,6 @@ std::string Target::makefile() noexcept
         str += "\t" + strJoin({getString("ar"), getString("arflags"), "$@", "$^", "\n\n"}, " ");
         break;
 
-    case Type::install:
     case Type::other:
         str += "\t" + strJoin({getString("cmd"), "\n\n"}, " ");
         return str;
@@ -177,9 +176,6 @@ std::string Target::cmdInstall() noexcept
 
     case Type::archive:
         return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
-    
-    case Type::install:
-        return getString("install");
 
     case Type::other:
         return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
