@@ -10,7 +10,8 @@
             "ar": "ar",
             "arflags": "rcs",
             "libs": "-lstdc++fs",
-            "install": "/usr/bin",
+            "install": "install -D -m0755 makemake /usr/bin",
+            "uninstall": "rm /usr/bin/makemake",
             "cmd": "",
             "sources": [
                 "config.cpp",

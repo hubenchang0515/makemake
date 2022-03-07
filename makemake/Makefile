@@ -5,11 +5,10 @@
 all: makemake
 
 install: all
-	 mkdir -p /usr/bin 
-	 install -m0755 makemake /usr/bin
+	 install -D -m0755 makemake /usr/bin
 
 uninstall:
-	 	 rm -f /usr/bin/makemake
+	 rm /usr/bin/makemake
 
 clean:
 	 rm -f config.o main.o target.o utils.o

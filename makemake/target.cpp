@@ -14,6 +14,7 @@ Target::Target() noexcept
     set("type", MakeMake::Target::Type::executable);
     set("libs", std::string(""));
     set("install", std::string(""));
+    set("uninstall", std::string(""));
     set("cmd", std::string(""));
 }
 
@@ -166,31 +167,7 @@ std::string Target::cmdInstall() noexcept
     if (getString("install").empty())
         return "";
 
-    std::string install = strJoin({"\t", "mkdir", "-p", getString("install"), "\n"}, " ");
-
-    switch (std::any_cast<Type>(m_datas["type"]))
-    {
-    case Type::executable:
-        install += strJoin({"\t", "install", "-m0755", getString("name"), getString("install")}, " ");
-        break;
-
-    case Type::shared:
-        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
-        break;
-
-    case Type::archive:
-        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
-        break;
-
-    case Type::other:
-        install += strJoin({"\t", "install", "-m0644", getString("name"), getString("install")}, " ");
-        break;
-
-    default:
-        return "";
-    }
-
-    return install;
+    return strJoin({"\t", getString("install")}, " ");
 }
 
 /***********************************
@@ -199,33 +176,10 @@ std::string Target::cmdInstall() noexcept
  * *********************************/
 std::string Target::cmdUninstall() noexcept
 {
-    if (getString("install").empty())
+    if (getString("uninstall").empty())
         return "";
 
-#ifndef MAKEMAKE_WINDOWS
-    std::string cmd = strJoin({"\t", "rm", "-f"}, " ");
-    std::string junk = strJoin({getString("install"), getString("name")}, "/");
-#else
-    std::string cmd = strJoin({"\t", "del", "/Q"}, " ");
-    std::string junk = strJoin({getString("install"), getString("name")}, "\\");
-#endif // MAKEMAKE_WINDOWS
-
-    switch (std::any_cast<Type>(m_datas["type"]))
-    {
-    case Type::executable:
-        return strJoin({"\t", cmd, junk}, " ");
-
-    case Type::shared:
-        return strJoin({"\t", cmd, junk}, " ");
-
-    case Type::archive:
-        return strJoin({"\t", cmd, junk}, " ");
-
-    case Type::other:
-        return strJoin({"\t", cmd, junk}, " ");
-    }
-
-    return "";
+    return strJoin({"\t", getString("uninstall")}, " ");
 }
 
 /***********************************
