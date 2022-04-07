@@ -17,8 +17,8 @@ namespace MakeMake
 
 constexpr static const size_t MAKEMAKE_IOBUFF_SIZE = 256;
 static const std::set<std::string> cExts = {".c"};
-static const std::set<std::string> cppExts = {".cpp"};
-static const std::set<std::string> srcExts = {".c", ".cpp"};
+static const std::set<std::string> cppExts = {".cpp", ".cxx", ".cc"};
+static const std::set<std::string> srcExts = {".c", ".cpp", ".cxx", ".cc"};
 
 /**************************************
  * @brief 清楚字符串两端的空白字符
