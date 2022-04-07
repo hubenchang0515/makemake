@@ -14,6 +14,7 @@ Target::Target() noexcept
     set("type", MakeMake::Target::Type::executable);
     set("libs", std::string(""));
     set("install", std::string(""));
+    set("uninstall", std::string(""));
     set("cmd", std::string(""));
 }
 
@@ -129,7 +130,6 @@ std::string Target::makefile() noexcept
         str += "\t" + strJoin({getString("ar"), getString("arflags"), "$@", "$^", "\n\n"}, " ");
         break;
 
-    case Type::install:
     case Type::other:
         str += "\t" + strJoin({getString("cmd"), "\n\n"}, " ");
         return str;
@@ -167,25 +167,19 @@ std::string Target::cmdInstall() noexcept
     if (getString("install").empty())
         return "";
 
-    switch (std::any_cast<Type>(m_datas["type"]))
-    {
-    case Type::executable:
-        return strJoin({"install", "-m0755", getString("name"), getString("install")}, " ");
+    return strJoin({"\t", getString("install")}, " ");
+}
 
-    case Type::shared:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
+/***********************************
+ * @brief 生成 uninstall 指令
+ * @return uninstall 指令
+ * *********************************/
+std::string Target::cmdUninstall() noexcept
+{
+    if (getString("uninstall").empty())
+        return "";
 
-    case Type::archive:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
-    
-    case Type::install:
-        return getString("install");
-
-    case Type::other:
-        return strJoin({"install", "-m0644", getString("name"), getString("install")}, " ");
-    }
-
-    return "";
+    return strJoin({"\t", getString("uninstall")}, " ");
 }
 
 /***********************************
@@ -194,13 +188,18 @@ std::string Target::cmdInstall() noexcept
  * *********************************/
 std::string Target::cmdClean() noexcept
 {
-    auto objs = strJoin(objects(), " ");
-    if (objs.empty())
+    std::string junk;
+    if (std::any_cast<Type>(m_datas["type"]) == Type::other)
+        junk = getString("name");
+    else
+        junk = strJoin(objects(), " ");
+
+    if (junk.empty())
         return "";
 #ifndef MAKEMAKE_WINDOWS
-    return strJoin({"rm", "-f", objs}, " ");
+    return strJoin({"\t", "rm", "-f", junk}, " ");
 #else
-    return strJoin({"del", "/Q", objs}, " ");
+    return strJoin({"\t", "del", "/Q", junk}, " ");
 #endif // MAKEMAKE_WINDOWS
 }
 

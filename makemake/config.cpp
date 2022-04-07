@@ -78,6 +78,9 @@ std::string Config::init(const std::string& name, const std::vector<std::string>
     writer.Key("install");
     writer.String("");
 
+    writer.Key("uninstall");
+    writer.String("");
+
     writer.Key("cmd");
     writer.String("");
 
@@ -130,8 +133,8 @@ void Config::loadTarget(Target& target, const rapidjson::Value& json) const noex
 
     static std::vector<std::string> configStringList = {
         "name", "cc", "cxx", "cflags", "cxxflags",
-        "ar", "arflags", "libs", "install", "cmd", 
-        "type"
+        "ar", "arflags", "libs", "install", "uninstall",
+        "cmd", "type"
     };
 
     for (auto& key : configStringList)
@@ -145,7 +148,6 @@ void Config::loadTarget(Target& target, const rapidjson::Value& json) const noex
             {"executable", Target::Type::executable},
             {"shared", Target::Type::shared},
             {"archive", Target::Type::archive},
-            {"install", Target::Type::install},
             {"other", Target::Type::other},
         };
         target.set("type", types[getString("type")]);

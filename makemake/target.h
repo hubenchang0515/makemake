@@ -19,7 +19,6 @@ public:
         executable = 0,
         shared,
         archive,
-        install,
         other,
     };
 
@@ -54,6 +53,12 @@ public:
      * @return install 指令
      * *********************************/
     std::string cmdInstall() noexcept;
+
+    /***********************************
+     * @brief 生成 uninstall 指令
+     * @return uninstall 指令
+     * *********************************/
+    std::string cmdUninstall() noexcept;
 
     /***********************************
      * @brief 生成 clean 指令
