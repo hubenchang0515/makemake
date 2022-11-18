@@ -3,6 +3,13 @@
 namespace MakeMake
 {
 
+// string 类型的字段
+static std::vector<std::string> configStringList = {
+    "name", "cc", "cxx", "cflags", "cxxflags",
+    "ar", "arflags", "libs", "install", "uninstall",
+    "cmd"
+};
+
 Target::Target() noexcept 
 {
     set("cc", std::string{"gcc"});
@@ -52,6 +59,125 @@ std::vector<std::string> Target::getStrVec(const std::string& key) const noexcep
     {
         return {};
     }
+}
+
+void Target::load(const rapidjson::Value& json) noexcept
+{
+    auto jsonGetString = [&json](const std::string& key) -> std::string{
+        auto keyOs = key + "." + OS_NAME;
+        if (json.HasMember(keyOs.c_str()) && json[keyOs.c_str()].IsString())
+            return json[keyOs.c_str()].GetString();
+        
+        if (json.HasMember(key.c_str()) && json[key.c_str()].IsString())
+            return json[key.c_str()].GetString();
+        
+        return "";
+    };
+
+    auto configString = [this, &jsonGetString](const std::string& key) {
+        std::string value = jsonGetString(key);
+        if (value == "")
+            return;
+        this->set(key, value);
+    };
+
+    // 加载 type 转换为枚举
+    if (getString("type") != "")
+    {
+        static std::map<std::string, Target::Type> types{
+            {"executable", Target::Type::executable},
+            {"shared", Target::Type::shared},
+            {"archive", Target::Type::archive},
+            {"other", Target::Type::other},
+        };
+        this->set("type", types[getString("type")]);
+    }
+
+    // 加载 string 类型的字段
+    for (auto& key : configStringList)
+    {
+        configString(key);
+    }
+
+    // 配置 string array 类型的字段
+    auto jsonGetStringArray = [&json](const std::string& key) -> std::vector<std::string>{
+        auto keyOs = key + "." + OS_NAME;
+        std::string keySelect;
+        if (json.HasMember(keyOs.c_str()) && json[keyOs.c_str()].IsArray())
+            keySelect = keyOs;
+        else if (json.HasMember(key.c_str()) && json[key.c_str()].IsArray())
+            keySelect = key;
+        else
+            return {};
+
+        auto jsonArray = json[keySelect.c_str()].GetArray();
+        std::vector<std::string> strVec;
+        for (auto& s : jsonArray)
+        {
+            strVec.emplace_back(s.GetString());
+        }
+
+        return strVec;
+    };
+
+    this->set("sources", jsonGetStringArray("sources"));
+    this->set("depends", jsonGetStringArray("depends"));
+}
+
+void Target::dump(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) const noexcept
+{
+    writer.StartObject(); // target
+
+    // 写 type 字段
+    writer.Key("type");
+    switch (std::any_cast<Type>(m_datas.at("type")))
+    {
+    case Type::executable:
+        writer.String("executable");
+        break;
+
+    case Type::shared:
+        writer.String("shared");
+        break;
+
+    case Type::archive:
+        writer.String("archive");
+        break;
+
+    default:
+        writer.String("other");
+        break;
+    }
+
+    // 写 string 类型的字段
+    for (auto& key : configStringList)
+    {
+        writer.Key(key.c_str());
+        writer.String(this->getString(key).c_str());
+    }
+
+    // 写 sources
+    writer.Key("sources");
+    writer.StartArray(); // sources
+    auto sources = getStrVec("sources");
+    for (auto& src : sources)
+    {
+        writer.String(src.c_str());
+    }
+    writer.EndArray(); // sources
+
+    // 写 depends
+    writer.Key("depends");
+    writer.StartArray(); // depends
+    auto depends = getStrVec("depends");
+    for (auto& src : depends)
+    {
+        writer.String(src.c_str());
+    }
+    writer.EndArray(); // depends
+
+    writer.EndObject(); // target
+
 }
 
 /***********************************

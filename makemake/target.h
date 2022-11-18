@@ -7,6 +7,10 @@
 #include <map>
 #include <any>
 
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
 namespace MakeMake
 {
 
@@ -30,6 +34,9 @@ public:
 
     std::string getString(const std::string& key) const noexcept;
     std::vector<std::string> getStrVec(const std::string& key) const noexcept;
+
+    void load(const rapidjson::Value& json) noexcept;
+    void dump(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer) const noexcept;
 
     /***********************************
      * @brief 解析 sources 中包含的文件夹

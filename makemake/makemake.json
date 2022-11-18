@@ -1,8 +1,8 @@
 {
     "targets": [
         {
-            "name": "makemake",
             "type": "executable",
+            "name": "makemake",
             "cc": "gcc",
             "cxx": "g++",
             "cflags": "-O2 -W -Wall",
@@ -14,9 +14,9 @@
             "uninstall": "rm /usr/bin/makemake",
             "cmd": "",
             "sources": [
-                "config.cpp",
                 "main.cpp",
                 "target.cpp",
+                "config.cpp",
                 "utils.cpp"
             ],
             "depends": []

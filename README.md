@@ -13,6 +13,16 @@ It will generate an `makemake.json` template. It will name target same as the di
 
 它将生成 `makemake.json` 的模板，它将目标命名为目录名，设置默认的编译器和编译选项，并包含当前目录下的所有源文件(`.c`，`.cpp`)。  
 
+### Refresh Sources List / 刷新源文件列表
+
+```
+$ makemake refresh
+```
+
+It will refresh the `sources` of the first target in the `makemake.json`. And other fileds will keep the same.
+
+它将刷新 `makemake.json` 中第一个目标的源文件列表，并保持其它字段不变。
+
 ### Generate Makefile / 生成 Makefile
 
 ```
@@ -38,10 +48,11 @@ If there is a `makemake.json` in the working directory, it will generate a `Make
             "ar" : "<archive tool>",
             "arflags" : "<archive flags>",
             "libs" : "<link libs>",
-            "install" : "<install path>",
+            "install" : "<install command>",
+            "uninstall" : "<uninstall command>",
             "cmd" : "<command, only for type other>",
             "sources" : [
-                // source files
+                // source files or directories
             ],
             "depends" : [
                 // other targets
