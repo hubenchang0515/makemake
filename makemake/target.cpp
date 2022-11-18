@@ -82,7 +82,7 @@ void Target::load(const rapidjson::Value& json) noexcept
     };
 
     // 加载 type 转换为枚举
-    if (getString("type") != "")
+    if (jsonGetString("type") != "")
     {
         static std::map<std::string, Target::Type> types{
             {"executable", Target::Type::executable},
@@ -90,7 +90,7 @@ void Target::load(const rapidjson::Value& json) noexcept
             {"archive", Target::Type::archive},
             {"other", Target::Type::other},
         };
-        this->set("type", types[getString("type")]);
+        this->set("type", types[jsonGetString("type")]);
     }
 
     // 加载 string 类型的字段
