@@ -4,6 +4,18 @@ namespace MakeMake
 {
 
 /**************************************
+ * @brief 判断文件扩展名是否在范围内
+ * @param[in] filename 文件名
+ * @param[in] exts 扩展名列表
+ * @return 是否在范围内
+ * ************************************/
+bool isFileExtIn(const std::string& filename, const std::set<std::string>& exts) noexcept
+{
+    std::filesystem::path path{filename};
+    return exts.find(path.extension().string()) != exts.end();
+}
+
+/**************************************
  * @brief 清楚字符串两端的空白字符
  * @param[in] str 原始字符串
  * @return 清除空白后的字符串

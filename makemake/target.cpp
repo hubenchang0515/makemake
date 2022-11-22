@@ -263,13 +263,12 @@ std::string Target::makefile() noexcept
 
     for (const auto& src : getStrVec("sources"))
     {
-        std::filesystem::path path{src};
-        if (path.extension() == ".c")
+        if (isFileExtIn(src, cExts))
         {
             str += rule(getString("cc") + " " + getString("cflags"), src) + "\n";
             str += "\t" + strJoin({getString("cc"), "-c", src, getString("cflags"), "\n\n"}, " ");
         }
-        else if(cppExts.find(path.extension().string()) != cppExts.end())
+        else if(isFileExtIn(src, cppExts) || isFileExtIn(src, cudaExts))
         {
             str += rule(getString("cxx") + " " + getString("cxxflags"), src) + "\n";
             str += "\t" + strJoin({getString("cxx"), "-c ", src, getString("cxxflags"), "\n\n"}, " ");
@@ -335,10 +334,9 @@ std::string Target::cmdClean() noexcept
  * *********************************/
 std::string Target::m_linker() const noexcept
 {
-    for (const auto& s : getStrVec("sources"))
+    for (const auto& src : getStrVec("sources"))
     {
-        std::filesystem::path path{s};
-        if (cppExts.find(path.extension().string()) != cppExts.end())
+        if (isFileExtIn(src, cppExts) || isFileExtIn(src, cudaExts))
         {
             return getString("cxx");
         }

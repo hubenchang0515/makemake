@@ -18,7 +18,16 @@ namespace MakeMake
 constexpr static const size_t MAKEMAKE_IOBUFF_SIZE = 256;
 static const std::set<std::string> cExts = {".c"};
 static const std::set<std::string> cppExts = {".cpp", ".cxx", ".cc"};
-static const std::set<std::string> srcExts = {".c", ".cpp", ".cxx", ".cc"};
+static const std::set<std::string> cudaExts = {".cu"};
+static const std::set<std::string> srcExts = {".c", ".cpp", ".cxx", ".cc", ".cu"};
+
+/**************************************
+ * @brief 判断文件扩展名是否在范围内
+ * @param[in] filename 文件名
+ * @param[in] exts 扩展名列表
+ * @return 是否在范围内
+ * ************************************/
+bool isFileExtIn(const std::string& filename, const std::set<std::string>& exts) noexcept;
 
 /**************************************
  * @brief 清楚字符串两端的空白字符

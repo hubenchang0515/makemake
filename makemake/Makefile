@@ -37,7 +37,7 @@ main.o: main.cpp utils.h platform.h target.h include/rapidjson/document.h \
  include/rapidjson/internal/dtoa.h include/rapidjson/internal/itoa.h \
  include/rapidjson/internal/itoa.h include/rapidjson/stringbuffer.h \
  include/rapidjson/stringbuffer.h config.h
-	g++ -c  ./main.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
+	g++ -c  main.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 
 target.o: target.cpp target.h platform.h utils.h \
  include/rapidjson/document.h include/rapidjson/reader.h \
@@ -61,7 +61,7 @@ target.o: target.cpp target.h platform.h utils.h \
  include/rapidjson/internal/dtoa.h include/rapidjson/internal/itoa.h \
  include/rapidjson/internal/itoa.h include/rapidjson/stringbuffer.h \
  include/rapidjson/stringbuffer.h
-	g++ -c  ./target.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
+	g++ -c  target.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 
 config.o: config.cpp config.h platform.h include/rapidjson/document.h \
  include/rapidjson/reader.h include/rapidjson/allocators.h \
@@ -84,8 +84,8 @@ config.o: config.cpp config.h platform.h include/rapidjson/document.h \
  include/rapidjson/internal/dtoa.h include/rapidjson/internal/itoa.h \
  include/rapidjson/internal/itoa.h include/rapidjson/stringbuffer.h \
  include/rapidjson/stringbuffer.h
-	g++ -c  ./config.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
+	g++ -c  config.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 
 utils.o: utils.cpp utils.h platform.h
-	g++ -c  ./utils.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
+	g++ -c  utils.cpp -O2 -W -Wall -Wextra -Iinclude -std=c++17 
 
